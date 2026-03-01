@@ -6,9 +6,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.secureauth.lab.configurations.JwtConfiguration;
+import com.secureauth.lab.configurations.JwtService;
 import com.secureauth.lab.entity.User;
 import com.secureauth.lab.repository.UserRepository;
 
@@ -17,11 +20,14 @@ import com.secureauth.lab.repository.UserRepository;
 public class AuthenticationController {
 	private UserRepository userRepo;
 	private PasswordEncoder encoder;
+	private JwtService jwtService;
 
-	public AuthenticationController(UserRepository userRepo, PasswordEncoder encoder) {
+	public AuthenticationController(UserRepository userRepo, PasswordEncoder encoder,
+			JwtService jwtService) {
 		super();
 		this.userRepo = userRepo;
 		this.encoder = encoder;
+		this.jwtService = jwtService;
 	}
 
 	@GetMapping("/")
@@ -49,6 +55,11 @@ public class AuthenticationController {
 		System.out.println(encoder.encode(user.getPassword()));
 		if (sgUser == null || !encoder.matches(user.getPassword(), sgUser.getPassword()))
 			return "Invalid credentials";
-		return "Login success";
+		return jwtService.generateToken(user.getUsername());
+	}
+
+	@PostMapping("/jwt-test")
+	public String testJwt() {
+		return "jwt validated";
 	}
 }
