@@ -2,18 +2,15 @@ package com.secureauth.lab.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.secureauth.lab.entity.User;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
-
 @Repository
-public class UserRepository {
-	@PersistenceContext
-	private EntityManager em;
+public interface UserRepository extends JpaRepository<User, Long> {
+//	@PersistenceContext
+//	private EntityManager em;
 
 //	@Transactional
 //	// ❌ VULNERABLE QUERY (INTENTIONAL)
@@ -25,26 +22,27 @@ public class UserRepository {
 //    }
 
 	// plain password retrival
-	@Transactional
-	public List<User> login(String username, String password) {
-
-		String query = "SELECT * FROM secure_users WHERE username = :username AND password = :password";
-
-		return em.createNativeQuery(query, User.class).setParameter("username", username)
-				.setParameter("password", password).getResultList();
-	}
+//	@Transactional
+//	public List<User> login(String username, String password) {
+//
+//		String query = "SELECT * FROM secure_users WHERE username = :username AND password = :password";
+//
+//		return em.createNativeQuery(query, User.class).setParameter("username", username)
+//				.setParameter("password", password).getResultList();
+//	}
 
 	// get user data and validate encoded password
-	@Transactional
-	public List<User> login(String username) {
+//	@Transactional
+	List<User> findByUsername(String userName);
+//	{
+//
+//		String query = "SELECT * FROM secure_users WHERE username = :username";
+//
+//		return em.createNativeQuery(query, User.class).setParameter("username", username).getResultList();
+//	}
 
-		String query = "SELECT * FROM secure_users WHERE username = :username";
-
-		return em.createNativeQuery(query, User.class).setParameter("username", username).getResultList();
-	}
-
-	@Transactional
-	public void save(User user) {
-		em.persist(user);
-	}
+//	@Transactional
+//	public void save(User user) {
+//		em.persist(user);
+//	}
 }

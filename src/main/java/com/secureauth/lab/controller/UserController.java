@@ -43,7 +43,7 @@ public class UserController {
 	public String login(@RequestBody User user) {
 
 //		List<User> users = userRepo.login(user.getUsername(), user.getPassword());
-		List<User> users = userRepo.login(user.getUsername());
+		List<User> users = userRepo.findByUsername(user.getUsername());
 		if (users.isEmpty())
 			return "Invalid credentials";
 
@@ -52,7 +52,7 @@ public class UserController {
 		System.out.println(encoder.encode(user.getPassword()));
 		if (sgUser == null || !encoder.matches(user.getPassword(), sgUser.getPassword()))
 			return "Invalid credentials";
-		return jwtService.generateToken(user.getUsername());
+		return jwtService.generateToken(user);
 	}
 
 }
